@@ -1,0 +1,10 @@
+FROM mysql:latest
+
+ENV MYSQL_ROOT_PASSWORD=root
+ENV MYSQL_DATABASE=accwe-hospital
+ENV MYSQL_USER=hospitalUser
+ENV MYSQL_PASSWORD=hospitalPass
+
+EXPOSE 3306
+
+CMD ["mysqld"]

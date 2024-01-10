@@ -57,12 +57,17 @@ public class AppointmentController {
         
         // Check date validity before checking the database (to avoid unnecessary queries)
         if (a.getFinishesAt().isBefore(a.getStartsAt())){
-            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
         // Avoid date conflicts
         if (appointmentRepository.findAll().stream().anyMatch(appointment::overlaps)){
             return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+        }
+
+        // Appointment needs to have diffent start and finish
+        if (a.getStartsAt().equals(a.getFinishesAt())) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
         appointmentRepository.save(a);

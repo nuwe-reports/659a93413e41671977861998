@@ -1,0 +1,26 @@
+# Step 1: Build and execute the test
+FROM maven:3.3-jdk-8 AS builder
+
+WORKDIR /app
+
+COPY pom.xml .
+COPY src/ /app/src/
+
+RUN mvn clean verify
+
+# Step 2: Build the app, generate the file WAR
+FROM builder AS final
+
+RUN mvn clean install
+
+# Step  3: Build image final with Tomcat
+FROM tomcat
+
+# copy the file WAR generated in the before step to directory webapps of Tomcat
+COPY --from=final /app/target/accenture-techhub-0.0.1-SNAPSHOT.war /usr/local/tomcat/webapps/
+
+# Expose the port on the listening Tomcat
+EXPOSE 8080
+
+# Comand to start Tomcat when container has been started
+CMD ["catalina.sh", "run"]
